@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+    [SerializeField] float _speed = 1.5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +14,6 @@ public class Laser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        transform.position += new Vector3(0, Time.deltaTime * _speed, 0);
     }
 }
