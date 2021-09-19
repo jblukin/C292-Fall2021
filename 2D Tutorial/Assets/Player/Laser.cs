@@ -15,5 +15,11 @@ public class Laser : MonoBehaviour
     void Update()
     {
         transform.position += new Vector3(0, Time.deltaTime * _speed, 0);
+
+        if(transform.position.y > 5.15f) {
+
+            Destroy(gameObject);
+
+        }
     }
 }

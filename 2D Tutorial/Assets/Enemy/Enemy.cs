@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] float _speed = 2.0f;
+    [SerializeField] float _speed = 1.25f;
     [SerializeField] GameObject _gameState;
 
     // Start is called before the first frame update
@@ -17,20 +17,34 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         transform.position -= new Vector3(0, Time.deltaTime * _speed, 0);
+        
+        if(transform.position.y < -5.15f) {
+
+            GameState.Instance.InititateGameOver();
+            Destroy(gameObject);
+
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collider) {
 
-        Destroy(gameObject);
+        if(collider.gameObject.name == "Laser(Clone)") {
+
+            Destroy(gameObject);
+            Destroy(collider.gameObject);
+            GameState.Instance.IncreaseScore(10);
+
+        }
+        
 
         if(collider.gameObject.name == "Player") {
 
             GameState.Instance.InititateGameOver();
+            Destroy(gameObject);
+            Destroy(collider.gameObject);
 
         }
 
-        Destroy(collider.gameObject);
-        GameState.Instance.IncreaseScore(10);
     }
 
 }

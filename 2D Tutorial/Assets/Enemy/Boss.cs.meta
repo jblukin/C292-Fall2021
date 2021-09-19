@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 1185845e31cb42f4bbc72f99b41d429b
+guid: d8e2a47bd734eda4294ad91ec8785d01
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
+  - _gameState: {instanceID: 0}
   - _enemyPrefab: {fileID: 7332683611314762260, guid: 7ce6335d4303a5d4da9648a318263e56, type: 3}
-  - _bossPrefab: {fileID: 7912305785127346455, guid: d7d7ad9ea768d0740abd50c6349e0fd2, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
