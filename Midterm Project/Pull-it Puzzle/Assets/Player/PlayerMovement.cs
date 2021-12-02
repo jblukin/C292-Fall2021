@@ -2,98 +2,160 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
-	
+public class PlayerMovement : MonoBehaviour
+{
 
-	[SerializeField] float _maxSpeed;
+    public float _moveSpeed;
 
-	[SerializeField] float _jumpHeight;
+	public Vector3 _spawnPoint;
 
-	Rigidbody2D _myRB;
+    public Rigidbody2D _rb;
 
-	bool _facingRight;
+    public Animator anime;
 
-	[SerializeField] public bool isGrounded = true;
+    float mx;
+    bool _facingRight;
+
+    bool _isGrounded;
+
+    bool _canMove;
+
+    public float _jumpForce = 20f;
+
+    public Transform _feet;
+
+    public LayerMask _groundLayers;
+
+    void Start()
+    {
+
+        _rb = GetComponent<Rigidbody2D>();
+        _canMove = true;
+		_spawnPoint = new Vector3(-12f, -3.9f, 0f);
+    }
 
 
-	void Start() {
+    void Update()
+    {
 
-		_facingRight = true;
-        _myRB = GetComponent<Rigidbody2D>();
+        MagicGrab();
 
-	}
+		if(transform.position.y <= -10f) {
 
-
-	void Update() {
-
-		if(transform.position.y < -5f) {
-
-			transform.position = new Vector3(0, -3.9f, 0);
-
-			_myRB.velocity = new Vector3(0, 0, 0);
-
-		}
-
-	}
-
-	void flip() {
-
-	      _facingRight = !_facingRight;
-
-	      Vector3 theScale = transform.localScale;
-
-	      theScale.x *= -1;
-
-	      transform.localScale = theScale;
-
-	  }
-
-	void FixedUpdate() {
-
-		if(Input.GetAxis("Vertical") > 0 && isGrounded) {
-
-		Debug.Log("run");
-
-		float vert = Input.GetAxis("Vertical");
-
-		_myRB.AddForce(new Vector3(_myRB.velocity.x, _jumpHeight, 0) * Time.deltaTime, ForceMode2D.Impulse);
-		//_myRB.velocity = new Vector3(_myRB.velocity.x, vert * _jumpHeight, 0) * Time.deltaTime;
+			transform.position = _spawnPoint;
 
 		}
 
-		float move = Input.GetAxis("Horizontal");
-		
-		Vector3 horizontalForce = new Vector3(move * _maxSpeed, _myRB.velocity.y, 0) * Time.deltaTime;
+        if (_canMove)
+        {
 
-		if(Mathf.Abs(_myRB.velocity.x) < _maxSpeed) {
+            mx = Input.GetAxisRaw("Horizontal");
 
-		_myRB.AddForce(horizontalForce, ForceMode2D.Impulse);
+            if (Input.GetButtonDown("Jump") && IsGrounded())
+            {
 
-		} else {
+                Jump();
 
-			float maxSpeedLocal = _maxSpeed;
+            }
 
-			if(_myRB.velocity.x < 0) {
+            if (Mathf.Abs(mx) > 0.05)
+            {
 
-				maxSpeedLocal = -maxSpeedLocal;
+                anime.SetBool("isRunning", true);
 
-			}
+            }
+            else
+            {
 
-			_myRB.velocity = new Vector3(maxSpeedLocal, _myRB.velocity.y, 0);
+                anime.SetBool("isRunning", false);
 
-		}
+            }
 
-			if (move > 0 && !_facingRight) {
+            anime.SetBool("isGrounded", IsGrounded());
 
-				flip();
+        }
 
-			} else if (move < 0 && _facingRight) {
+    }
 
-				flip();
+    void FixedUpdate()
+    {
 
-			}
+        if (_canMove)
+        {
 
-		}
+            Vector3 movement = new Vector3(mx * _moveSpeed, _rb.velocity.y, 0);
 
+            _rb.velocity = movement;
+
+            if (_rb.velocity.x < 0 && !_facingRight)
+            {
+
+                flip();
+
+            }
+            else if (_rb.velocity.x > 0 && _facingRight)
+            {
+
+                flip();
+
+            }
+
+        }
+    }
+
+    public bool IsGrounded()
+    {
+
+        Collider2D groundCheck = Physics2D.OverlapCircle(_feet.position, 0.5f, _groundLayers);
+
+        if (groundCheck != null)
+        {
+
+            return true;
+
+        }
+        else return false;
+
+    }
+
+    void flip()
+    {
+
+        _facingRight = !_facingRight;
+
+        Vector3 theScale = transform.localScale;
+
+        theScale.x *= -1;
+
+        transform.localScale = theScale;
+
+    }
+
+    void Jump()
+    {
+
+        Vector3 movement = new Vector3(_rb.velocity.x, _jumpForce, 0f);
+
+        _rb.velocity = movement;
+
+    }
+
+    void MagicGrab()
+    {
+
+        if (Input.GetButtonDown("Grab") && IsGrounded())
+        {
+
+            _canMove = !_canMove;
+
+			anime.SetBool("isGrabbing", !_canMove);
+
+			anime.SetBool("isRunning", false);
+
+			_rb.velocity = new Vector3(0f, 0f, 0f);
+
+        }
+
+    }
 
 }
