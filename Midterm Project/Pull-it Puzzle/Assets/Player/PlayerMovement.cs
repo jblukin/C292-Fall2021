@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
 
     public float _moveSpeed;
 
-	public Vector3 _spawnPoint;
+    public Vector3 _spawnPoint;
 
     public Rigidbody2D _rb;
 
@@ -20,6 +21,12 @@ public class PlayerMovement : MonoBehaviour
 
     bool _canMove;
 
+    bool _grabbed;
+
+    RaycastHit2D hit;
+
+    Collider2D _collider = null;
+
     public float _jumpForce = 20f;
 
     public Transform _feet;
@@ -31,7 +38,8 @@ public class PlayerMovement : MonoBehaviour
 
         _rb = GetComponent<Rigidbody2D>();
         _canMove = true;
-		_spawnPoint = new Vector3(-12f, -3.9f, 0f);
+        _spawnPoint = new Vector3(-12f, -3.9f, 0f);
+
     }
 
 
@@ -40,11 +48,12 @@ public class PlayerMovement : MonoBehaviour
 
         MagicGrab();
 
-		if(transform.position.y <= -10f) {
+        if (transform.position.y <= -10f)
+        {
 
-			transform.position = _spawnPoint;
+            transform.position = _spawnPoint;
 
-		}
+        }
 
         if (_canMove)
         {
@@ -90,13 +99,13 @@ public class PlayerMovement : MonoBehaviour
             if (_rb.velocity.x < 0 && !_facingRight)
             {
 
-                flip();
+                Flip();
 
             }
             else if (_rb.velocity.x > 0 && _facingRight)
             {
 
-                flip();
+                Flip();
 
             }
 
@@ -118,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void flip()
+    void Flip()
     {
 
         _facingRight = !_facingRight;
@@ -148,12 +157,80 @@ public class PlayerMovement : MonoBehaviour
 
             _canMove = !_canMove;
 
-			anime.SetBool("isGrabbing", !_canMove);
+            anime.SetBool("isGrabbing", !_canMove);
 
-			anime.SetBool("isRunning", false);
+            anime.SetBool("isRunning", false);
 
-			_rb.velocity = new Vector3(0f, 0f, 0f);
+            _rb.velocity = new Vector3(0f, 0f, 0f);
 
+            if (_grabbed)
+            {
+
+                _grabbed = false;
+
+                _collider.SendMessage("MagicGrab", 0, SendMessageOptions.DontRequireReceiver);
+
+                _collider = null;
+
+            }
+
+        }
+
+        if (!_canMove)
+        {
+
+            if (Input.GetAxisRaw("Vertical") == 1f)
+            {
+
+                hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up));
+                sendMessage(1);
+
+            }
+            else if (Input.GetAxisRaw("Horizontal") == 1f)
+            {
+
+                hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.right));
+                sendMessage(2);
+
+            }
+            else if (Input.GetAxisRaw("Horizontal") == -1f)
+            {
+
+                hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left));
+                sendMessage(2);
+
+            }
+
+        }
+
+    }
+
+    void sendMessage(int direction)
+    {
+
+        if (_collider == null)
+        {
+
+            _collider = hit.collider;
+
+        }
+
+        if (!_grabbed)
+        {
+
+            _collider.SendMessage("MagicGrab", direction, SendMessageOptions.DontRequireReceiver);
+            _grabbed = true;
+
+        }
+
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        if (collision.collider.tag == "Goal")
+        {
+            SceneManager.LoadScene("EndScreen");
         }
 
     }
