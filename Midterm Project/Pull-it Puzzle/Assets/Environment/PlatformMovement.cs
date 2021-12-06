@@ -11,7 +11,7 @@ public class PlatformMovement : MonoBehaviour
     public Transform _movePoint;
 
     public LayerMask whatStopsMovement;
-    
+
     int _direction = 0;
 
     Collider2D _collider;
@@ -110,6 +110,14 @@ public class PlatformMovement : MonoBehaviour
 
         grabbed = !grabbed;
         _direction = direction;
+        if (grabbed)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+        }
+        else
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        }
 
     }
 

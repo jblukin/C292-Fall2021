@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
 
         _rb = GetComponent<Rigidbody2D>();
         _canMove = true;
-        _spawnPoint = new Vector3(-12f, -3.9f, 0f);
+        _spawnPoint = new Vector3(-18f, -0.8f, 0f);
 
     }
 

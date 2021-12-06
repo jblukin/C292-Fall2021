@@ -133,7 +133,7 @@ MonoBehaviour:
   _movePoint: {fileID: 2339514771480845792}
   whatStopsMovement:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 68
 --- !u!61 &2339514772271421482
 BoxCollider2D:
   m_ObjectHideFlags: 0
