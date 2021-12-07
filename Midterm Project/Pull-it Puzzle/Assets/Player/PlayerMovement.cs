@@ -33,12 +33,15 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask _groundLayers;
 
+    public AudioSource _grabSound;
+
     void Start()
     {
 
         _rb = GetComponent<Rigidbody2D>();
         _canMove = true;
         _spawnPoint = new Vector3(-18f, -0.8f, 0f);
+        _grabSound = GetComponentInChildren<AudioSource>();
 
     }
 
@@ -191,6 +194,11 @@ public class PlayerMovement : MonoBehaviour
 
                 hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.right));
                 sendMessage(2);
+                if(_facingRight) {
+
+                    Flip();
+
+                }
 
             }
             else if (Input.GetAxisRaw("Horizontal") == -1f)
@@ -198,6 +206,11 @@ public class PlayerMovement : MonoBehaviour
 
                 hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left));
                 sendMessage(2);
+                if(!_facingRight) {
+
+                    Flip();
+
+                }
 
             }
 
@@ -208,11 +221,9 @@ public class PlayerMovement : MonoBehaviour
     void sendMessage(int direction)
     {
 
-        if (_collider == null)
+        if (hit.collider.tag == "Moveable")
         {
-
             _collider = hit.collider;
-
         }
 
         if (!_grabbed)
@@ -220,6 +231,7 @@ public class PlayerMovement : MonoBehaviour
 
             _collider.SendMessage("MagicGrab", direction, SendMessageOptions.DontRequireReceiver);
             _grabbed = true;
+            _grabSound.Play();
 
         }
 
@@ -228,9 +240,22 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
 
+        Scene current = SceneManager.GetActiveScene();
+
         if (collision.collider.tag == "Goal")
         {
-            SceneManager.LoadScene("EndScreen");
+            if (current.name == "Level1")
+            {
+
+                SceneManager.LoadScene("Level2");
+
+            }
+            else if (current.name == "Level2")
+            {
+
+                SceneManager.LoadScene("EndScreen");
+            }
+
         }
 
     }
