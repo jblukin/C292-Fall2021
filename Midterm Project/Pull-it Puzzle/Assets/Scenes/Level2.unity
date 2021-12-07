@@ -1738,7 +1738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &334266196
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2953,7 +2953,7 @@ MonoBehaviour:
   _groundLayers:
     serializedVersion: 2
     m_Bits: 192
-  _grabSound: {fileID: 0}
+  _grabSound: {fileID: 847407252}
 --- !u!61 &1242002244
 BoxCollider2D:
   m_ObjectHideFlags: 0
